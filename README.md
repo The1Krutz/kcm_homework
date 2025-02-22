@@ -1,45 +1,21 @@
-# kcm_homework
+# Vue Teleprompter Application
 
-This template should help get you started developing with Vue 3 in Vite.
+Homework assignment for Keeping Current Matters
 
-## Recommended IDE Setup
+## Deliverables
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+1. Instructions on how to run the application
+   1. a
+   2. b
+   3. c
+2. Brief explanation of your approach and any challenges you encountered
+   1. a
+   2. b
+   3. c
+3. If you use AI assistance, provide a link to the AI chat or a copy of the chat history
+   1. Nope
 
-## Type Support for `.vue` Imports in TS
+## Notes to self - TEMPORARY
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
-
-```sh
-npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Type-Check, Compile and Minify for Production
-
-```sh
-npm run build
-```
-
-### Run Unit Tests with [Vitest](https://vitest.dev/)
-
-```sh
-npm run test:unit
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
-```
+- used `npm create vue@latest` to create a starter app
+  - included typescript and tests (just in case)
