@@ -20,10 +20,21 @@ const currentStatus: Ref<PrompterStatus> = ref({
   section: '',
 });
 const tokenizedText: Ref<PToken[]> = ref([]);
+const prompter: Ref<InstanceType<typeof Teleprompter> | null> = ref(null);
 
-function addEvent(event: PrompterEvent) {
-  debugEvents.value.push(event);
-  updateStatus(event);
+function onStart() {
+  console.log('App.onStart');
+  prompter.value?.StartPrompter();
+}
+
+function onStop() {
+  console.log('App.onStop');
+  prompter.value?.StopPrompter();
+}
+
+function onReset() {
+  console.log('App.onReset');
+  prompter.value?.ResetPrompter();
 }
 
 function updateStatus(event: PrompterEvent) {
@@ -59,10 +70,10 @@ onMounted(() => {
 
 <template>
   <main>
-    <Teleprompter :tokenizedText="tokenizedText" />
+    <Teleprompter :tokenizedText="tokenizedText" ref="prompter" />
     <Status :status="currentStatus" />
     <EventLog :events="debugEvents" />
-    <Controls @add-event="(event) => addEvent(event)" />
+    <Controls @start="() => onStart()" @stop="() => onStop()" @reset="() => onReset()" />
   </main>
 </template>
 

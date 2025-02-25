@@ -24,12 +24,22 @@ export function TokenizeScript(script: string): PToken[] {
     eventTarget: 'id:asdffghjkl',
   });
 
-  for (let i = 0; i < 200; i++) {
+  for (let i = 0; i < 50; i++) {
     returning.push({
       type: 'text',
       id: id++,
       text: 'tomato' + i,
     });
+
+    if (i % 5 === 0) {
+      const temp = id++;
+      returning.push({
+        type: 'event',
+        id: temp,
+        eventType: 'switchSection',
+        eventTarget: 'id:' + temp,
+      });
+    }
   }
 
   return returning;

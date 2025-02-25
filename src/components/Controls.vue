@@ -1,31 +1,19 @@
 <script setup lang="ts">
-import { type PrompterEvent } from './types';
-
 defineProps<{}>();
 
 const emitEvent = defineEmits<{
-  'add-event': [event: PrompterEvent];
+  start: [];
+  stop: [];
+  reset: [];
+  // TODO - new events for other controls like speed and size
 }>();
-
-function onStart() {
-  console.log('start clicked');
-  emitEvent('add-event', { event: 'startPlayback' });
-}
-function onStop() {
-  console.log('stop clicked');
-  emitEvent('add-event', { event: 'stopPlayback' });
-}
-function onReset() {
-  console.log('reset clicked');
-  emitEvent('add-event', { event: 'resetPlayback' });
-}
 </script>
 
 <template>
   <div class="controls">
-    <button @click="onStart">Start</button>
-    <button @click="onStop">Stop</button>
-    <button @click="onReset">Reset</button>
+    <button @click="emitEvent('start')">Start</button>
+    <button @click="emitEvent('stop')">Stop</button>
+    <button @click="emitEvent('reset')">Reset</button>
   </div>
 </template>
 
