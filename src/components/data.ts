@@ -1,10 +1,39 @@
+import { type PToken } from './types';
+
 // reasonable limits on prompter font size
-export const MinFontSize = 10
-export const MaxFontSize = 200
+export const MinFontSize = 10;
+export const MaxFontSize = 200;
 
 // reasonable limits on prompter scroll speed
-export const MinScrollSpeed = 10
-export const MaxScrollSpeed = 200
+export const MinScrollSpeed = 10;
+export const MaxScrollSpeed = 200;
+
+// converts the script into a list of tokens for the prompter component to work with
+export function TokenizeScript(script: string): PToken[] {
+  const returning: PToken[] = [];
+  let id = 0;
+
+  /**
+   * DEBUG
+   * Replace this with something that actually converts the script into a tokenized list
+   */
+  returning.push({
+    type: 'event',
+    id: id++,
+    eventType: 'switchSection',
+    eventTarget: 'id:asdffghjkl',
+  });
+
+  for (let i = 0; i < 200; i++) {
+    returning.push({
+      type: 'text',
+      id: id++,
+      text: 'tomato' + i,
+    });
+  }
+
+  return returning;
+}
 
 // Sample script copied from assignment pdf
 export const sampleScript = `
@@ -30,4 +59,4 @@ line. Even if it’s just a little bit.{/edit}
 
 {edit:id=outro}And slower price growth isn’t bad either. It means any home you buy – or
 own – should go up in value in the year ahead.{/edit}
-`
+`;

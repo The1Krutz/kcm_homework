@@ -4,12 +4,35 @@ export const enum StatusOption {
 }
 
 export interface PrompterStatus {
-  status: StatusOption // running or stopped
-  feed: string // camera, image, etc
+  status: StatusOption; // running or stopped
+  feed: string; // camera, image, etc
+  section: string; // name of the current text section
 }
 
-export const enum EventName {
-  Start = 'Start',
-  Stop = 'Stop',
-  Reset = 'Reset',
-}
+type EventWithDetails = {
+  event: 'switchToCamera' | 'switchToImage' | 'switchSection';
+  target: string;
+};
+
+type EventWithoutDetails = {
+  event: 'startPlayback' | 'stopPlayback' | 'resetPlayback';
+};
+
+export type PrompterEvent = {} & (EventWithDetails | EventWithoutDetails);
+
+type tokenBase = {
+  id: number; // present to help Vue maintain state
+};
+
+type textToken = {
+  type: 'text';
+  text: string;
+};
+
+type eventToken = {
+  type: 'event';
+  eventType: PrompterEvent['event'];
+  eventTarget: string;
+};
+
+export type PToken = tokenBase & (textToken | eventToken);

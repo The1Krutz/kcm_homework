@@ -1,23 +1,23 @@
 <script setup lang="ts">
-import { EventName } from './types'
+import { type PrompterEvent } from './types';
 
-defineProps<{}>()
+defineProps<{}>();
 
 const emitEvent = defineEmits<{
-  'add-event': [eventName: EventName]
-}>()
+  'add-event': [event: PrompterEvent];
+}>();
 
 function onStart() {
-  console.log('start clicked')
-  emitEvent('add-event', EventName.Start)
+  console.log('start clicked');
+  emitEvent('add-event', { event: 'startPlayback' });
 }
 function onStop() {
-  console.log('stop clicked')
-  emitEvent('add-event', EventName.Stop)
+  console.log('stop clicked');
+  emitEvent('add-event', { event: 'stopPlayback' });
 }
 function onReset() {
-  console.log('reset clicked')
-  emitEvent('add-event', EventName.Reset)
+  console.log('reset clicked');
+  emitEvent('add-event', { event: 'resetPlayback' });
 }
 </script>
 
