@@ -13,7 +13,7 @@ import {
 } from './components/types';
 import { sampleScript, TokenizeScript } from './components/data';
 
-const debugEvents: Ref<PrompterEvent[]> = ref([]);
+const eventHistory: Ref<PrompterEvent[]> = ref([]);
 const currentStatus: Ref<PrompterStatus> = ref({
   status: StatusOption.Stopped,
   feed: '',
@@ -37,22 +37,29 @@ function onReset() {
   prompter.value?.ResetPrompter();
 }
 
-function updateStatus(event: PrompterEvent) {
+function onPrompterEvent(event: PrompterEvent) {
   switch (event.event) {
     case 'switchToCamera':
-    case 'switchToImage':
+      console.log('App.onChangeCamera');
       currentStatus.value.feed = event.target;
       break;
+    case 'switchToImage':
+      console.log('App.onChangeImage');
+      currentStatus.value.feed = event.target;
     case 'switchSection':
+      console.log('App.onChangeSection');
       currentStatus.value.section = event.target;
       break;
     case 'startPlayback':
+      console.log('App.onStartPlayback');
       currentStatus.value.status = StatusOption.Running;
       break;
     case 'stopPlayback':
+      console.log('App.onStopPlayback');
       currentStatus.value.status = StatusOption.Stopped;
       break;
     case 'resetPlayback':
+      console.log('App.onResetPlayback');
       /**
        * This keeps the current running state (ie if it's running, keep running) but resets the feed/section so the start tags can set them
        */
@@ -60,6 +67,7 @@ function updateStatus(event: PrompterEvent) {
       currentStatus.value.section = '';
       break;
   }
+  eventHistory.value.push(event);
 }
 
 onMounted(() => {
@@ -70,9 +78,9 @@ onMounted(() => {
 
 <template>
   <main>
-    <Teleprompter :tokenizedText="tokenizedText" ref="prompter" />
+    <Teleprompter :tokenizedText="tokenizedText" @prompterEvent="onPrompterEvent" ref="prompter" />
     <Status :status="currentStatus" />
-    <EventLog :events="debugEvents" />
+    <EventLog :events="eventHistory" />
     <Controls @start="() => onStart()" @stop="() => onStop()" @reset="() => onReset()" />
   </main>
 </template>

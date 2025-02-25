@@ -1,16 +1,11 @@
 <script setup lang="ts">
 import { ref, useTemplateRef, type Ref, type ShallowRef } from 'vue';
 import { MaxFontSize, MaxScrollSpeed, MinFontSize, MinScrollSpeed } from './data';
-import type { PToken } from './types';
+import type { PrompterEvent, PToken } from './types';
 
 const props = defineProps<{ tokenizedText: PToken[] }>();
 const emitEvent = defineEmits<{
-  'start-playback': [];
-  'stop-playback': [];
-  'reset-playback': [];
-  'change-camera': [target: string];
-  'change-image': [target: string];
-  'change-section': [target: string];
+  prompterEvent: [event: PrompterEvent];
 }>();
 defineExpose({
   StartPrompter,
@@ -19,21 +14,19 @@ defineExpose({
 });
 
 function StartPrompter() {
+  emitEvent('prompterEvent', { event: 'startPlayback' });
   processNextToken();
-  emitEvent('start-playback');
 }
 
 function StopPrompter() {
+  emitEvent('prompterEvent', { event: 'stopPlayback' });
   clearTimeout(currentTimeout.value);
-
-  emitEvent('stop-playback');
 }
 
 function ResetPrompter() {
+  emitEvent('prompterEvent', { event: 'resetPlayback' });
   currentFocusToken.value = 0;
   scrollToFocusToken();
-
-  emitEvent('reset-playback');
 }
 
 function SetScrollSpeed(newSpeed: number) {
@@ -64,66 +57,51 @@ function processNextToken() {
   // handle every token type, and set up the timer to advance to the next token
   const currentToken = props.tokenizedText[currentFocusToken.value];
 
-  if (currentToken.type === 'text') {
+  if (currentToken == null) {
+    StopPrompter();
+  } else if (currentToken.type === 'text') {
     // handle text tokens
 
     scrollToFocusToken();
 
     currentTimeout.value = setTimeout(() => {
       processNextToken();
-    }, 500);
+    }, scrollSpeed.value);
   } else if (currentToken.type === 'event') {
-    // TODO - handle events
-    console.log('tomato', 'jorp');
+    // emit events for non-visible tokens
+    if (currentToken.eventType === 'switchToCamera') {
+      emitEvent('prompterEvent', { event: 'switchToCamera', target: currentToken.eventTarget });
+    } else if (currentToken.eventType === 'switchToImage') {
+      emitEvent('prompterEvent', { event: 'switchToImage', target: currentToken.eventTarget });
+    } else if (currentToken.eventType === 'switchSection') {
+      emitEvent('prompterEvent', { event: 'switchSection', target: currentToken.eventTarget });
+    }
 
     // since this token was not visible, immediately process the next one
     processNextToken();
-
-    if (currentToken.eventType === 'switchToCamera') {
-      emitEvent('change-camera', currentToken.eventTarget);
-    } else if (currentToken.eventType === 'switchToImage') {
-      emitEvent('change-image', currentToken.eventTarget);
-    } else if (currentToken.eventType === 'switchSection') {
-      emitEvent('change-section', currentToken.eventTarget);
-    }
   }
 }
 
 function scrollToFocusToken() {
-  const focusToken = focusMe.value?.[currentFocusToken.value];
-  console.log(focusToken);
-
-  focusToken?.scrollIntoView({ behavior: 'auto' });
+  focusMe.value?.[currentFocusToken.value]?.scrollIntoView({ behavior: 'smooth' });
 }
 
 const fontSize: Ref<number> = ref(20);
-const scrollSpeed: Ref<number> = ref(20);
+const scrollSpeed: Ref<number> = ref(200);
 const currentFocusToken: Ref<number> = ref(0); // id of the currently focused token, controls scrolling behavior
-const focusMe = useTemplateRef('focusMe');
+const focusMe = useTemplateRef<HTMLSpanElement[]>('focusMe');
 const currentTimeout: Ref<number> = ref(0);
 </script>
 
 <template>
   <div class="greetings">Teleprompter display</div>
   <div class="prompterText">
-    <!-- <template v-for="token in tokenizedText" ref="focusMe">
-      <span
-        v-if="token.type === 'text'"
-        :key="token.id"
-        :class="{
-          focus: token.id === currentFocusToken,
-        }"
-        >{{ token.text }}
-      </span>
-
-      <span v-if="token.type === 'event'" :key="token.id" class="hidden"></span>
-    </template> -->
-
     <span
       v-for="token in tokenizedText"
       :key="token.id"
       :class="{
         focus: token.id === currentFocusToken,
+        hidden: token.type === 'event',
       }"
       ref="focusMe"
       >{{ token.type === 'text' ? token.text : '' }}
@@ -149,7 +127,6 @@ const currentTimeout: Ref<number> = ref(0);
 
 .prompterText span {
   font-size: v-bind(fontSize + 'px');
-  border: 1px dashed blue;
   width: fit-content;
   height: fit-content;
 }
@@ -160,6 +137,8 @@ const currentTimeout: Ref<number> = ref(0);
 }
 
 .hidden {
-  display: none;
+  width: 0;
+  height: 0;
+  margin-left: -5px;
 }
 </style>
