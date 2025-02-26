@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, useTemplateRef, type Ref } from 'vue';
 import type { PrompterEvent, PToken } from './types';
+import { formatTime } from './data';
 
 const props = defineProps<{
   tokenizedText: PToken[];
@@ -119,20 +120,6 @@ function scrollToFocusToken() {
 function scrollToBeginning() {
   const firstDisplayableToken = props.tokenizedText.findIndex((z) => z.type === 'text');
   focusMe.value?.[firstDisplayableToken]?.scrollIntoView({ behavior: 'instant' });
-}
-
-/**
- * Converts milliseconds to minutes and seconds, as in "02:30"
- * @param milliseconds milliseconds to display
- */
-function formatTime(milliseconds: number): string {
-  const seconds = Math.floor(milliseconds / 1000);
-  const minutes = Math.floor(seconds / 60);
-  const remainingSeconds = seconds - minutes * 60;
-
-  const secondsString = `${remainingSeconds}`.padStart(2, '0');
-
-  return `${minutes}:${secondsString}`;
 }
 </script>
 

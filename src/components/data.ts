@@ -1,5 +1,19 @@
 import { type PrompterEvent, type PToken } from './types';
 
+/**
+ * Converts milliseconds to minutes and seconds, as in "02:30"
+ * @param milliseconds milliseconds to display
+ */
+export function formatTime(milliseconds: number): string {
+  const seconds = Math.floor(milliseconds / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds - minutes * 60;
+
+  const secondsString = `${remainingSeconds}`.padStart(2, '0');
+
+  return `${minutes}:${secondsString}`;
+}
+
 // converts the script into a list of tokens for the prompter component to work with
 export function TokenizeScript(script: string): PToken[] {
   const returning: PToken[] = [];
