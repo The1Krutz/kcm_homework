@@ -30,7 +30,6 @@ const eventsItem = useTemplateRef<HTMLParagraphElement[]>('eventsItem');
 watch(
   props.eventHistory,
   () => {
-    console.log('tomato');
     if (eventsItem.value && eventsItem.value.length > 0) {
       eventsItem.value?.[eventsItem.value.length - 1]?.scrollIntoView({ behavior: 'smooth' });
     }

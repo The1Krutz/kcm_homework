@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, useTemplateRef, type Ref, type ShallowRef } from 'vue';
+import { onMounted, ref, useTemplateRef, type Ref, type ShallowRef } from 'vue';
 import type { PrompterEvent, PToken } from './types';
 
 const props = defineProps<{
@@ -50,7 +50,7 @@ function StopPrompter() {
 function ResetPrompter() {
   emitEvent('prompterEvent', { event: 'resetPlayback' });
   currentFocusToken.value = -1;
-  scrollToFocusToken();
+  scrollToFocusToken(0);
 }
 
 function SetSpeedMultiplier(newSpeed: number) {
@@ -86,8 +86,6 @@ function processNextToken() {
       processNextToken();
     }, getTimeToNextToken());
   } else if (currentToken.type === 'event') {
-    console.log('tomato', currentToken);
-
     // emit events for non-visible tokens
     if (currentToken.eventType === 'switchToCamera') {
       emitEvent('prompterEvent', { event: 'switchToCamera', target: currentToken.eventTarget });
@@ -99,12 +97,22 @@ function processNextToken() {
 
     // since this token was not visible, immediately process the next one
     processNextToken();
+  } else if (currentToken.type === 'render') {
+    // these tokens are not processed here at all; they're used to control the display of the prompter. Just move on
+    processNextToken();
   }
 }
 
-function scrollToFocusToken() {
-  focusMe.value?.[currentFocusToken.value]?.scrollIntoView({ behavior: 'smooth' });
+function scrollToFocusToken(tokenIdx?: number) {
+  if (tokenIdx == null) {
+    tokenIdx = currentFocusToken.value;
+  }
+  focusMe.value?.[tokenIdx]?.scrollIntoView({ behavior: 'smooth' });
 }
+
+onMounted(() => {
+  console.log(props.tokenizedText);
+});
 </script>
 
 <template>
@@ -116,6 +124,7 @@ function scrollToFocusToken() {
       :class="{
         focus: token.id === currentFocusToken,
         hidden: token.type === 'event',
+        lineBreak: token.type === 'render' && token.render === 'lineBreak',
       }"
       ref="focusMe"
       >{{ token.type === 'text' ? token.text : '' }}
@@ -129,9 +138,9 @@ function scrollToFocusToken() {
   flex-direction: row;
   flex-wrap: wrap;
   align-content: flex-start;
-  gap: 5px;
+  gap: v-bind((prompterFontSize/4) + 'px');
 
-  height: 50px;
+  height: 250px;
   width: 400px;
   overflow-y: hidden;
   scroll-behavior: smooth;
@@ -141,7 +150,6 @@ function scrollToFocusToken() {
 
 .prompterText span {
   font-size: v-bind(prompterFontSize + 'px');
-  width: fit-content;
   height: fit-content;
 }
 
@@ -154,5 +162,9 @@ function scrollToFocusToken() {
   width: 0;
   height: 0;
   margin-left: -5px;
+}
+
+.lineBreak {
+  width: 100%;
 }
 </style>

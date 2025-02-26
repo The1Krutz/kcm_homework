@@ -20,14 +20,17 @@ export function TokenizeScript(script: string): PToken[] {
       returning.push(parseEventTag(tag, returning.length));
     } else if (letter === ' ' || letter === '.') {
       // text-only tags end with either a word break or a period. This will break if there are sentences that end without a period, ie: "projected{/edit}"
-      const tag = script.slice(lastIdx, i + 1);
+      const tag = script.slice(lastIdx, i + 1).trim();
       lastIdx = i + 1;
 
-      returning.push({
-        id: returning.length,
-        type: 'text',
-        text: tag.trim(), // remove whitespace, we're already accounting for it in the css for the prompter
-      });
+      // skip text tags with blank text
+      if (tag !== '') {
+        returning.push({
+          id: returning.length,
+          type: 'text',
+          text: tag, // remove whitespace, we're already accounting for it in the css for the prompter
+        });
+      }
     }
   }
 
@@ -38,9 +41,8 @@ function parseEventTag(tag: string, id: number): PToken {
   if (tag.startsWith('{/')) {
     // all end tags are the same, since we're only using them for line breaks for now
     return {
-      type: 'event',
-      eventType: 'lineBreak',
-      eventTarget: '', // isn't used but still required
+      type: 'render',
+      render: 'lineBreak',
       id,
     };
   } else {

@@ -41,9 +41,8 @@ describe('script parser', () => {
       },
       {
         id: 6,
-        type: 'event',
-        eventType: 'lineBreak',
-        eventTarget: '',
+        type: 'render',
+        render: 'lineBreak',
       },
     ];
 

@@ -15,7 +15,7 @@ type EventWithDetails = {
 };
 
 type EventWithoutDetails = {
-  event: 'startPlayback' | 'stopPlayback' | 'resetPlayback' | 'lineBreak';
+  event: 'startPlayback' | 'stopPlayback' | 'resetPlayback';
 };
 
 export type PrompterEvent = {} & (EventWithDetails | EventWithoutDetails);
@@ -35,4 +35,9 @@ type eventToken = {
   eventTarget: string;
 };
 
-export type PToken = tokenBase & (textToken | eventToken);
+type renderToken = {
+  type: 'render';
+  render: 'lineBreak';
+};
+
+export type PToken = tokenBase & (textToken | eventToken | renderToken);

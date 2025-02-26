@@ -18,14 +18,14 @@ const emitEvent = defineEmits<{
   setSize: [newSize: number];
 }>();
 
-const defaultStatus: PrompterStatus = {
+// const defaultStatus: PrompterStatus = ;
+
+const eventHistory: Ref<PrompterEvent[]> = ref([]);
+const currentStatus: Ref<PrompterStatus> = ref({
   status: StatusOption.Stopped,
   feed: 'n/a',
   section: 'n/a',
-};
-
-const eventHistory: Ref<PrompterEvent[]> = ref([]);
-const currentStatus: Ref<PrompterStatus> = ref(defaultStatus);
+});
 const playbackSpeedMultiplier: Ref<number> = ref(1);
 const prompterFontSize: Ref<number> = ref(20);
 
@@ -55,8 +55,9 @@ function onPrompterEvent(event: PrompterEvent) {
       /**
        * This keeps the current running state (ie if it's running, keep running) but resets the feed/section so the start tags can set them
        */
-      currentStatus.value.feed = defaultStatus.feed;
-      currentStatus.value.section = defaultStatus.section;
+      currentStatus.value.feed = 'n/a';
+      currentStatus.value.section = 'n/a';
+
       // clear event history, but do it in a strange way because otherwise it seems to break the ref and stop triggering the watcher
       eventHistory.value.length = 0;
       break;
