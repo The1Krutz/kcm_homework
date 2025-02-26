@@ -14,5 +14,8 @@ Homework assignment for Keeping Current Matters
    3. First worked on getting the scrolling teleprompter working since that seemed like the hardest part
       1. Started with a format of parsing the script into word tokens and scrolling to each word at a set rate.
    4. Got the events flowing between controls, prompter, and status log
+   5. Last major hurdle was parsing the script into the token format from earlier. For pure data manipulation like this, I find it easier to work with tests, so I wrote a simple test case.
+      1. This exposed that my original sample data hadn't included enough variation, so now I had a couple edge cases to cover. ie: line breaks between sections, script tags with extra data, etc
+   6. After that, I started cleaning up any leftover debug code. css borders, console logs, etc
 3. If you use AI assistance, provide a link to the AI chat or a copy of the chat history
    1. No AI assistance.
