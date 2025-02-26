@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, useTemplateRef, type Ref } from 'vue';
+import { onMounted, ref, useTemplateRef, watch, type Ref } from 'vue';
 import type { PrompterEvent, PToken } from './types';
 
 const props = defineProps<{
@@ -24,6 +24,7 @@ const currentTimeout: Ref<number> = ref(0);
 const isPlaying: Ref<boolean> = ref(false);
 const playbackSpeedMultiplier: Ref<number> = ref(1);
 const prompterFontSize: Ref<number> = ref(20);
+const remainingMs: Ref<number> = ref(0);
 
 function StartPrompter() {
   if (isPlaying.value) {
@@ -82,9 +83,15 @@ function processNextToken() {
 
     scrollToFocusToken();
 
+    const timeUntilNext = getTimeToNextToken();
+    // estimate the remaining reading time using the remaining words * the time to the next word. This speed is not
+    // affected by the size of the teleprompter or font, since the scroll rate is only tied to word count
+    const remainingTokens = props.tokenizedText.length - currentFocusToken.value;
+    remainingMs.value = timeUntilNext * remainingTokens;
+
     currentTimeout.value = setTimeout(() => {
       processNextToken();
-    }, getTimeToNextToken());
+    }, timeUntilNext);
   } else if (currentToken.type === 'event') {
     // emit events for non-visible tokens
     if (currentToken.eventType === 'switchToCamera') {
@@ -110,13 +117,23 @@ function scrollToFocusToken(tokenIdx?: number) {
   focusMe.value?.[tokenIdx]?.scrollIntoView({ behavior: 'smooth' });
 }
 
-onMounted(() => {
-  console.log(props.tokenizedText);
-});
+/**
+ * Converts milliseconds to minutes and seconds, as in "02:30"
+ * @param milliseconds milliseconds to display
+ */
+function formatTime(milliseconds: number): string {
+  const seconds = Math.floor(milliseconds / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds - minutes * 60;
+
+  const secondsString = `${remainingSeconds}`.padStart(2, '0');
+
+  return `${minutes}:${secondsString}`;
+}
 </script>
 
 <template>
-  <div class="greetings">Teleprompter display</div>
+  <div class="greetings">Teleprompter display (est. {{ formatTime(remainingMs) }} to finish)</div>
   <div class="prompterText">
     <span
       v-for="token in tokenizedText"

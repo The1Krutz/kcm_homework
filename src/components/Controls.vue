@@ -30,26 +30,20 @@ const prompterFontSize: Ref<number> = ref(20);
 function onPrompterEvent(event: PrompterEvent) {
   switch (event.event) {
     case 'switchToCamera':
-      console.log('Controls.onChangeCamera');
       currentStatus.value.display = 'camera ' + event.target;
       break;
     case 'switchToImage':
-      console.log('Controls.onChangeImage');
       currentStatus.value.display = 'image ' + event.target;
     case 'switchSection':
-      console.log('Controls.onChangeSection');
       currentStatus.value.section = event.target;
       break;
     case 'startPlayback':
-      console.log('Controls.onStartPlayback');
       currentStatus.value.status = StatusOption.Running;
       break;
     case 'stopPlayback':
-      console.log('Controls.onStopPlayback');
       currentStatus.value.status = StatusOption.Stopped;
       break;
     case 'resetPlayback':
-      console.log('Controls.onResetPlayback');
       /**
        * This keeps the current running state (ie if it's running, keep running) but resets the feed/section so the start tags can set them
        */

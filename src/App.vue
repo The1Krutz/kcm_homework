@@ -16,27 +16,22 @@ const controls: Ref<InstanceType<typeof Controls> | null> = ref(null);
  * - change speed or font size
  */
 function onStart() {
-  console.log('App.onStart');
   prompter.value?.StartPrompter();
 }
 
 function onStop() {
-  console.log('App.onStop');
   prompter.value?.StopPrompter();
 }
 
 function onReset() {
-  console.log('App.onReset');
   prompter.value?.ResetPrompter();
 }
 
 function onSetSpeed(newSpeed: number) {
-  console.log('App.onSetSpeed');
   prompter.value?.SetSpeedMultiplier(newSpeed);
 }
 
 function onSetSize(newSize: number) {
-  console.log('App.onSetSize');
   prompter.value?.SetFontSize(newSize);
 }
 
@@ -46,7 +41,6 @@ function onSetSize(newSize: number) {
  * - adding to the event log
  */
 function onPrompterEvent(event: PrompterEvent) {
-  console.log('App.onPrompterEvent');
   controls.value?.onPrompterEvent(event);
 }
 
