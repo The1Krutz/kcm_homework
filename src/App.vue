@@ -3,8 +3,6 @@ import { onMounted, ref, type Ref } from 'vue';
 
 import Teleprompter from './components/Teleprompter.vue';
 import Controls from './components/Controls.vue';
-import Status from './components/Status.vue';
-import EventLog from './components/EventLog.vue';
 import {
   StatusOption,
   type PrompterEvent,
@@ -22,8 +20,6 @@ const defaultStatus: PrompterStatus = {
 const tokenizedText: Ref<PToken[]> = ref([]);
 const prompter: Ref<InstanceType<typeof Teleprompter> | null> = ref(null);
 const controls: Ref<InstanceType<typeof Controls> | null> = ref(null);
-const playbackSpeed: Ref<number> = ref(200);
-const prompterFontSize: Ref<number> = ref(20);
 
 /**
  * Prompter responding to events from the controls
@@ -45,6 +41,16 @@ function onReset() {
   prompter.value?.ResetPrompter();
 }
 
+function onSetSpeed(newSpeed: number) {
+  console.log('App.onSetSpeed');
+  prompter.value?.SetSpeedMultiplier(newSpeed);
+}
+
+function onSetSize(newSize: number) {
+  console.log('App.onSetSize');
+  prompter.value?.SetFontSize(newSize);
+}
+
 /**
  * Controls responding to events from the prompter
  * - status updates
@@ -58,7 +64,6 @@ function onPrompterEvent(event: PrompterEvent) {
 onMounted(() => {
   // parse script text and send it into the prompter
   tokenizedText.value = TokenizeScript(sampleScript);
-  console.log('tomato', 'mounted', tokenizedText.value);
 });
 </script>
 
@@ -66,9 +71,11 @@ onMounted(() => {
   <main>
     <Teleprompter :tokenizedText="tokenizedText" @prompterEvent="onPrompterEvent" ref="prompter" />
     <Controls
-      @start="() => onStart()"
-      @stop="() => onStop()"
-      @reset="() => onReset()"
+      @start="onStart"
+      @stop="onStop"
+      @reset="onReset"
+      @setSpeed="onSetSpeed"
+      @setSize="onSetSize"
       ref="controls"
     />
   </main>

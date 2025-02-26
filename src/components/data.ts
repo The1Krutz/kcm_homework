@@ -1,13 +1,5 @@
 import { type PToken } from './types';
 
-// reasonable limits on prompter font size
-export const MinFontSize = 10;
-export const MaxFontSize = 200;
-
-// reasonable limits on prompter scroll speed
-export const MinScrollSpeed = 10;
-export const MaxScrollSpeed = 200;
-
 // converts the script into a list of tokens for the prompter component to work with
 export function TokenizeScript(script: string): PToken[] {
   const returning: PToken[] = [];

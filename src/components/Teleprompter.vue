@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { ref, useTemplateRef, type Ref, type ShallowRef } from 'vue';
-import { MaxFontSize, MaxScrollSpeed, MinFontSize, MinScrollSpeed } from './data';
 import type { PrompterEvent, PToken } from './types';
 
-const props = defineProps<{ tokenizedText: PToken[] }>();
+const props = defineProps<{
+  tokenizedText: PToken[];
+}>();
 const emitEvent = defineEmits<{
   prompterEvent: [event: PrompterEvent];
 }>();
@@ -11,14 +12,18 @@ defineExpose({
   StartPrompter,
   StopPrompter,
   ResetPrompter,
+  SetSpeedMultiplier,
+  SetFontSize,
 });
 
-const fontSize: Ref<number> = ref(20);
-const scrollSpeed: Ref<number> = ref(200);
+const basePlaybackSpeed = 200; // time per word in milliseconds
+
 const currentFocusToken: Ref<number> = ref(0); // id of the currently focused token, controls scrolling behavior
 const focusMe = useTemplateRef<HTMLSpanElement[]>('focusMe');
 const currentTimeout: Ref<number> = ref(0);
 const isPlaying: Ref<boolean> = ref(false);
+const playbackSpeedMultiplier: Ref<number> = ref(1);
+const prompterFontSize: Ref<number> = ref(20);
 
 function StartPrompter() {
   if (isPlaying.value) {
@@ -48,26 +53,20 @@ function ResetPrompter() {
   scrollToFocusToken();
 }
 
-function SetSpeed(newSpeed: number) {
-  // enforce some reasonable limits before setting the font size
-  if (newSpeed > MaxScrollSpeed) {
-    scrollSpeed.value = MaxScrollSpeed;
-  } else if (newSpeed < MinScrollSpeed) {
-    scrollSpeed.value = MinScrollSpeed;
-  } else {
-    scrollSpeed.value = newSpeed;
-  }
+function SetSpeedMultiplier(newSpeed: number) {
+  playbackSpeedMultiplier.value = newSpeed;
 }
 
 function SetFontSize(newSize: number) {
-  // enforce some reasonable limits before setting the font size
-  if (newSize > MaxFontSize) {
-    fontSize.value = MaxFontSize;
-  } else if (newSize < MinFontSize) {
-    fontSize.value = MinFontSize;
-  } else {
-    fontSize.value = newSize;
-  }
+  prompterFontSize.value = newSize;
+}
+
+// do the math to turn the playback speed multiplier into milliseconds for the next word
+function getTimeToNextToken() {
+  /**
+   * base speed divided by the multiplier, since x2 speed means 1/2 the time, and setTimeout takes ms
+   */
+  return basePlaybackSpeed / playbackSpeedMultiplier.value;
 }
 
 function processNextToken() {
@@ -85,7 +84,7 @@ function processNextToken() {
 
     currentTimeout.value = setTimeout(() => {
       processNextToken();
-    }, scrollSpeed.value);
+    }, getTimeToNextToken());
   } else if (currentToken.type === 'event') {
     // emit events for non-visible tokens
     if (currentToken.eventType === 'switchToCamera') {
@@ -139,7 +138,7 @@ function scrollToFocusToken() {
 }
 
 .prompterText span {
-  font-size: v-bind(fontSize + 'px');
+  font-size: v-bind(prompterFontSize + 'px');
   width: fit-content;
   height: fit-content;
 }

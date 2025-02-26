@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Status from './Status.vue';
 import EventLog from './EventLog.vue';
-import { ref, type Ref } from 'vue';
+import { ref, watch, type Ref } from 'vue';
 import { StatusOption, type PrompterEvent, type PrompterStatus } from './types';
 
 defineProps<{}>();
@@ -26,6 +26,8 @@ const defaultStatus: PrompterStatus = {
 
 const eventHistory: Ref<PrompterEvent[]> = ref([]);
 const currentStatus: Ref<PrompterStatus> = ref(defaultStatus);
+const playbackSpeedMultiplier: Ref<number> = ref(1);
+const prompterFontSize: Ref<number> = ref(20);
 
 function onPrompterEvent(event: PrompterEvent) {
   switch (event.event) {
@@ -61,6 +63,14 @@ function onPrompterEvent(event: PrompterEvent) {
   }
   eventHistory.value.push(event);
 }
+
+watch(playbackSpeedMultiplier, () => {
+  emitEvent('setSpeed', playbackSpeedMultiplier.value);
+});
+
+watch(prompterFontSize, () => {
+  emitEvent('setSize', prompterFontSize.value);
+});
 </script>
 
 <template>
@@ -75,20 +85,28 @@ function onPrompterEvent(event: PrompterEvent) {
     <button @click="emitEvent('reset')">Reset</button>
     <div class="sliderContainer">
       <div class="slider">
-        <label for="speed">Speed</label>
-        <input type="range" id="speed" name="speed" min="0.25" max="2.0" value="1.0" step="0.25" />
+        <label for="speed">Speed ({{ playbackSpeedMultiplier }})</label>
+        <input
+          v-model="playbackSpeedMultiplier"
+          type="range"
+          id="speed"
+          name="speed"
+          min="0.25"
+          max="2.0"
+          step="0.25"
+        />
       </div>
 
       <div class="slider">
-        <label for="fontSize">Font Size</label>
+        <label for="fontSize">Font Size ({{ prompterFontSize }})</label>
         <input
+          v-model.number="prompterFontSize"
           type="range"
           id="fontSize"
           name="fontSize"
-          min="0.25"
-          max="2.0"
-          value="1.0"
-          step="0.25"
+          min="10"
+          max="200"
+          step="10"
         />
       </div>
     </div>
@@ -114,7 +132,6 @@ function onPrompterEvent(event: PrompterEvent) {
 }
 
 .sliderContainer {
-  border: 1px dashed red;
   display: flex;
   flex-direction: column;
 }
@@ -124,6 +141,10 @@ function onPrompterEvent(event: PrompterEvent) {
   flex-wrap: nowrap;
   justify-content: space-between;
   align-items: center;
-  gap: 15px;
+  gap: 10px;
+}
+
+.slider label {
+  width: 110px;
 }
 </style>
