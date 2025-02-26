@@ -18,7 +18,7 @@ export function TokenizeScript(script: string): PToken[] {
       lastIdx = i + 1;
 
       returning.push(parseEventTag(tag, returning.length));
-    } else if (letter === ' ' || letter === '.') {
+    } else if ([' ', '.', '\n'].includes(letter)) {
       // text-only tags end with either a word break or a period. This will break if there are sentences that end without a period, ie: "projected{/edit}"
       const tag = script.slice(lastIdx, i + 1).trim();
       lastIdx = i + 1;

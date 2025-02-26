@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, useTemplateRef, watch, type Ref } from 'vue';
+import { ref, useTemplateRef, type Ref } from 'vue';
 import type { PrompterEvent, PToken } from './types';
 
 const props = defineProps<{
@@ -23,7 +23,7 @@ const focusMe = useTemplateRef<HTMLSpanElement[]>('focusMe');
 const currentTimeout: Ref<number> = ref(0);
 const isPlaying: Ref<boolean> = ref(false);
 const playbackSpeedMultiplier: Ref<number> = ref(1);
-const prompterFontSize: Ref<number> = ref(20);
+const prompterFontSize: Ref<number> = ref(40);
 const remainingMs: Ref<number> = ref(0);
 
 function StartPrompter() {
@@ -51,7 +51,7 @@ function StopPrompter() {
 function ResetPrompter() {
   emitEvent('prompterEvent', { event: 'resetPlayback' });
   currentFocusToken.value = -1;
-  scrollToFocusToken(0);
+  scrollToBeginning();
 }
 
 function SetSpeedMultiplier(newSpeed: number) {
@@ -110,11 +110,15 @@ function processNextToken() {
   }
 }
 
-function scrollToFocusToken(tokenIdx?: number) {
-  if (tokenIdx == null) {
-    tokenIdx = currentFocusToken.value;
-  }
-  focusMe.value?.[tokenIdx]?.scrollIntoView({ behavior: 'smooth' });
+// gently scroll to the next token
+function scrollToFocusToken() {
+  focusMe.value?.[currentFocusToken.value]?.scrollIntoView({ behavior: 'smooth' });
+}
+
+// instantly scroll back to the top
+function scrollToBeginning() {
+  const firstDisplayableToken = props.tokenizedText.findIndex((z) => z.type === 'text');
+  focusMe.value?.[firstDisplayableToken]?.scrollIntoView({ behavior: 'instant' });
 }
 
 /**
@@ -133,7 +137,9 @@ function formatTime(milliseconds: number): string {
 </script>
 
 <template>
-  <div class="greetings">Teleprompter display (est. {{ formatTime(remainingMs) }} to finish)</div>
+  <div class="prompterTitle">
+    Teleprompter display (est. {{ formatTime(remainingMs) }} to finish)
+  </div>
   <div class="prompterText">
     <span
       v-for="token in tokenizedText"
@@ -158,8 +164,8 @@ function formatTime(milliseconds: number): string {
   /* spaces between text are a little weird at higher font sizes since we're doing everything on the word level */
   gap: v-bind((prompterFontSize/4) + 'px');
 
-  height: 250px;
-  width: 400px;
+  height: 350px;
+  width: 500px;
   overflow-y: hidden;
   scroll-behavior: smooth;
 
@@ -177,9 +183,7 @@ function formatTime(milliseconds: number): string {
 }
 
 .hidden {
-  width: 0;
-  height: 0;
-  margin-left: -5px;
+  display: none;
 }
 
 .lineBreak {

@@ -25,7 +25,7 @@ const currentStatus: Ref<PrompterStatus> = ref({
   section: 'n/a',
 });
 const playbackSpeedMultiplier: Ref<number> = ref(1);
-const prompterFontSize: Ref<number> = ref(20);
+const prompterFontSize: Ref<number> = ref(40);
 
 function onPrompterEvent(event: PrompterEvent) {
   switch (event.event) {
@@ -98,7 +98,7 @@ watch(prompterFontSize, () => {
           id="fontSize"
           name="fontSize"
           min="10"
-          max="200"
+          max="100"
           step="10"
         />
       </div>
