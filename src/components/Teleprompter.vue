@@ -138,6 +138,7 @@ onMounted(() => {
   flex-direction: row;
   flex-wrap: wrap;
   align-content: flex-start;
+  /* spaces between text are a little weird at higher font sizes since we're doing everything on the word level */
   gap: v-bind((prompterFontSize/4) + 'px');
 
   height: 250px;
@@ -165,6 +166,7 @@ onMounted(() => {
 }
 
 .lineBreak {
+  /* full width item in a flex box will push itself onto a new line, and force everything after it onto its own line too */
   width: 100%;
 }
 </style>
