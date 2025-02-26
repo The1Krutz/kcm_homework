@@ -38,6 +38,7 @@ function StopPrompter() {
   }
 
   emitEvent('prompterEvent', { event: 'stopPlayback' });
+  isPlaying.value = false;
   clearTimeout(currentTimeout.value);
 }
 

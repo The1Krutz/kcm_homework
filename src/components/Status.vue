@@ -17,8 +17,7 @@ defineProps<{
 <style scoped>
 .status {
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 15px;
+  flex-direction: column;
+  align-items: flex-start;
 }
 </style>

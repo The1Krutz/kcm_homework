@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { nextTick, useTemplateRef, watch } from 'vue';
+import { useTemplateRef, watch } from 'vue';
 import type { PrompterEvent } from './types';
 
 const props = defineProps<{
-  events: PrompterEvent[];
+  eventHistory: PrompterEvent[];
 }>();
 
 function getEventDisplayText(event: PrompterEvent): string {
@@ -27,23 +27,23 @@ function getEventDisplayText(event: PrompterEvent): string {
 
 const eventsItem = useTemplateRef<HTMLParagraphElement[]>('eventsItem');
 
-watch(props.events, async () => {
-  /**
-   * We're watching the event history prop, so we need to let the DOM finish updating before we try to scroll to the
-   * bottom. If we scroll right away, there will be one item below the scroll. I'm sure there's a better way to do this,
-   * but it works for now.
-   */
-  await nextTick();
-
-  eventsItem.value?.[eventsItem.value.length - 1]?.scrollIntoView({ behavior: 'smooth' });
-});
+watch(
+  props.eventHistory,
+  () => {
+    console.log('tomato');
+    if (eventsItem.value && eventsItem.value.length > 0) {
+      eventsItem.value?.[eventsItem.value.length - 1]?.scrollIntoView({ behavior: 'smooth' });
+    }
+  },
+  { flush: 'post' },
+);
 </script>
 
 <template>
   <div class="log-container">
     <label for="#event-list">Event Log</label>
     <div id="event-list" class="event-list">
-      <p v-for="event in events" ref="eventsItem">{{ getEventDisplayText(event) }}</p>
+      <p v-for="event in eventHistory" ref="eventsItem">{{ getEventDisplayText(event) }}</p>
     </div>
   </div>
 </template>
@@ -51,6 +51,7 @@ watch(props.events, async () => {
 <style scoped>
 .log-container {
   border: 1px dashed red;
+  width: 200px;
 }
 
 label {
@@ -58,7 +59,7 @@ label {
 }
 
 .event-list {
-  max-height: 100px;
+  height: 125px;
   overflow: auto;
 }
 </style>
