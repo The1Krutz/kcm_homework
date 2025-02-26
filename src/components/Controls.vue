@@ -18,8 +18,6 @@ const emitEvent = defineEmits<{
   setSize: [newSize: number];
 }>();
 
-// const defaultStatus: PrompterStatus = ;
-
 const eventHistory: Ref<PrompterEvent[]> = ref([]);
 const currentStatus: Ref<PrompterStatus> = ref({
   status: StatusOption.Stopped,
@@ -118,13 +116,14 @@ watch(prompterFontSize, () => {
 .controls {
   display: flex;
   flex-direction: row;
+  gap: 10px;
 }
 
 .controlButtons {
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 15px;
+  gap: 10px;
   width: 500px;
 }
 

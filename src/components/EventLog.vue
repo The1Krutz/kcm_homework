@@ -49,7 +49,7 @@ watch(
 
 <style scoped>
 .log-container {
-  border: 1px dashed red;
+  border: 1px solid grey;
   width: 200px;
 }
 

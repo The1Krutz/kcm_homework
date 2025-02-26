@@ -11,12 +11,6 @@ import {
 } from './components/types';
 import { sampleScript, TokenizeScript } from './components/data';
 
-const defaultStatus: PrompterStatus = {
-  status: StatusOption.Stopped,
-  feed: 'n/a',
-  section: 'n/a',
-};
-
 const tokenizedText: Ref<PToken[]> = ref([]);
 const prompter: Ref<InstanceType<typeof Teleprompter> | null> = ref(null);
 const controls: Ref<InstanceType<typeof Controls> | null> = ref(null);

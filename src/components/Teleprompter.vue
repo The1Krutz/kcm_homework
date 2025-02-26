@@ -146,7 +146,7 @@ onMounted(() => {
   overflow-y: hidden;
   scroll-behavior: smooth;
 
-  border: 1px dashed red;
+  border: 1px solid grey;
 }
 
 .prompterText span {
