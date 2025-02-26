@@ -10,11 +10,7 @@ const tokenizedText: Ref<PToken[]> = ref([]);
 const prompter: Ref<InstanceType<typeof Teleprompter> | null> = ref(null);
 const controls: Ref<InstanceType<typeof Controls> | null> = ref(null);
 
-/**
- * Prompter responding to events from the controls
- * - start, stop, reset
- * - change speed or font size
- */
+// #region Prompter responding to events from Controls
 function onStart() {
   prompter.value?.StartPrompter();
 }
@@ -34,15 +30,13 @@ function onSetSpeed(newSpeed: number) {
 function onSetSize(newSize: number) {
   prompter.value?.SetFontSize(newSize);
 }
+// #endregion
 
-/**
- * Controls responding to events from the prompter
- * - status updates
- * - adding to the event log
- */
+// #region Controls responding to events from Prompter
 function onPrompterEvent(event: PrompterEvent) {
   controls.value?.onPrompterEvent(event);
 }
+// #endregion
 
 onMounted(() => {
   // parse script text and send it into the prompter

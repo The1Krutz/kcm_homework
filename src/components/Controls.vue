@@ -4,8 +4,6 @@ import EventLog from './EventLog.vue';
 import { ref, watch, type Ref } from 'vue';
 import { StatusOption, type PrompterEvent, type PrompterStatus } from './types';
 
-defineProps<{}>();
-
 defineExpose({
   onPrompterEvent,
 });

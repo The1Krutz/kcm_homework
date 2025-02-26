@@ -17,16 +17,17 @@ defineExpose({
   SetFontSize,
 });
 
-const basePlaybackSpeed = 200; // time per word in milliseconds
+const basePlaybackSpeed = 200; // base scroll speed is 5 words per second
 
 const currentFocusToken: Ref<number> = ref(-1); // id of the currently focused token, controls scrolling behavior
-const focusMe = useTemplateRef<HTMLSpanElement[]>('focusMe');
-const currentTimeout: Ref<number> = ref(0);
-const isPlaying: Ref<boolean> = ref(false);
+const focusMe = useTemplateRef<HTMLSpanElement[]>('focusMe'); // list of all focusable text tokens
+const currentTimeout: Ref<number> = ref(0); // timer for the focus to move to the next word token. Used for cancelling the timer when necessary
+const isPlaying: Ref<boolean> = ref(false); // flag for whether the player is currently playing. Used to prevent strange behavior if user clicks the start button multiple times
 const playbackSpeedMultiplier: Ref<number> = ref(1);
 const prompterFontSize: Ref<number> = ref(40);
-const remainingMs: Ref<number> = ref(0);
+const remainingMs: Ref<number> = ref(0); // estimated time to finish, in milliseconds (because that's how the timeout is stored)
 
+// #region exports
 function StartPrompter() {
   if (isPlaying.value) {
     // early out if the player is already running
@@ -62,6 +63,7 @@ function SetSpeedMultiplier(newSpeed: number) {
 function SetFontSize(newSize: number) {
   prompterFontSize.value = newSize;
 }
+// #endregion
 
 // do the math to turn the playback speed multiplier into milliseconds for the next word
 function getTimeToNextToken() {
