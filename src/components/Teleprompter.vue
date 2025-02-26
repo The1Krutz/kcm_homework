@@ -119,7 +119,7 @@ const currentTimeout: Ref<number> = ref(0);
 
   height: 50px;
   width: 400px;
-  overflow-y: auto;
+  overflow-y: hidden;
   scroll-behavior: smooth;
 
   border: 1px dashed red;

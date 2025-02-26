@@ -65,6 +65,8 @@ function onPrompterEvent(event: PrompterEvent) {
        */
       currentStatus.value.feed = '';
       currentStatus.value.section = '';
+      // clear event history
+      eventHistory.value = [];
       break;
   }
   eventHistory.value.push(event);

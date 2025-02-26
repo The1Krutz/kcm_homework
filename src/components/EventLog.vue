@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useTemplateRef, watch } from 'vue';
+import { nextTick, useTemplateRef, watch } from 'vue';
 import type { PrompterEvent } from './types';
 
 const props = defineProps<{
@@ -27,7 +27,14 @@ function getEventDisplayText(event: PrompterEvent): string {
 
 const eventsItem = useTemplateRef<HTMLParagraphElement[]>('eventsItem');
 
-watch(props.events, () => {
+watch(props.events, async () => {
+  /**
+   * We're watching the event history prop, so we need to let the DOM finish updating before we try to scroll to the
+   * bottom. If we scroll right away, there will be one item below the scroll. I'm sure there's a better way to do this,
+   * but it works for now.
+   */
+  await nextTick();
+
   eventsItem.value?.[eventsItem.value.length - 1]?.scrollIntoView({ behavior: 'smooth' });
 });
 </script>
@@ -47,16 +54,11 @@ watch(props.events, () => {
 }
 
 label {
-  border: 1px dashed green;
+  font-size: larger;
 }
 
 .event-list {
-  border: 1px dashed yellow;
   max-height: 100px;
   overflow: auto;
-}
-
-.event-list p {
-  border: 1px dashed blue;
 }
 </style>
