@@ -9,7 +9,7 @@ defineProps<{
 <template>
   <div class="status">
     <span>Status: {{ status.status }} </span>
-    <span>Image: {{ status.feed }} </span>
+    <span>Display: {{ status.display }} </span>
     <span>Section: {{ status.section }} </span>
   </div>
 </template>

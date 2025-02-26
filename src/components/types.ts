@@ -5,7 +5,7 @@ export const enum StatusOption {
 
 export interface PrompterStatus {
   status: StatusOption; // running or stopped
-  feed: string; // camera, image, etc
+  display: string; // camera, image, etc
   section: string; // name of the current text section
 }
 
@@ -18,7 +18,7 @@ type EventWithoutDetails = {
   event: 'startPlayback' | 'stopPlayback' | 'resetPlayback';
 };
 
-export type PrompterEvent = {} & (EventWithDetails | EventWithoutDetails);
+export type PrompterEvent = EventWithDetails | EventWithoutDetails;
 
 type tokenBase = {
   id: number; // present to help Vue maintain state

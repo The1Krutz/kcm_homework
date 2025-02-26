@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, useTemplateRef, type Ref, type ShallowRef } from 'vue';
+import { onMounted, ref, useTemplateRef, type Ref } from 'vue';
 import type { PrompterEvent, PToken } from './types';
 
 const props = defineProps<{

@@ -3,12 +3,7 @@ import { onMounted, ref, type Ref } from 'vue';
 
 import Teleprompter from './components/Teleprompter.vue';
 import Controls from './components/Controls.vue';
-import {
-  StatusOption,
-  type PrompterEvent,
-  type PrompterStatus,
-  type PToken,
-} from './components/types';
+import { type PrompterEvent, type PToken } from './components/types';
 import { sampleScript, TokenizeScript } from './components/data';
 
 const tokenizedText: Ref<PToken[]> = ref([]);

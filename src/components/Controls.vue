@@ -21,7 +21,7 @@ const emitEvent = defineEmits<{
 const eventHistory: Ref<PrompterEvent[]> = ref([]);
 const currentStatus: Ref<PrompterStatus> = ref({
   status: StatusOption.Stopped,
-  feed: 'n/a',
+  display: 'n/a',
   section: 'n/a',
 });
 const playbackSpeedMultiplier: Ref<number> = ref(1);
@@ -31,11 +31,11 @@ function onPrompterEvent(event: PrompterEvent) {
   switch (event.event) {
     case 'switchToCamera':
       console.log('Controls.onChangeCamera');
-      currentStatus.value.feed = event.target;
+      currentStatus.value.display = 'camera ' + event.target;
       break;
     case 'switchToImage':
       console.log('Controls.onChangeImage');
-      currentStatus.value.feed = event.target;
+      currentStatus.value.display = 'image ' + event.target;
     case 'switchSection':
       console.log('Controls.onChangeSection');
       currentStatus.value.section = event.target;
@@ -53,7 +53,7 @@ function onPrompterEvent(event: PrompterEvent) {
       /**
        * This keeps the current running state (ie if it's running, keep running) but resets the feed/section so the start tags can set them
        */
-      currentStatus.value.feed = 'n/a';
+      currentStatus.value.display = 'n/a';
       currentStatus.value.section = 'n/a';
 
       // clear event history, but do it in a strange way because otherwise it seems to break the ref and stop triggering the watcher
