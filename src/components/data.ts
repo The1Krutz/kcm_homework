@@ -1,14 +1,84 @@
-import { type PToken } from './types';
+import { type PrompterEvent, type PToken } from './types';
 
 // converts the script into a list of tokens for the prompter component to work with
 export function TokenizeScript(script: string): PToken[] {
   const returning: PToken[] = [];
+
+  let lastIdx = 0;
+
+  for (let i = 0; i < script.length; i++) {
+    const letter = script[i];
+
+    if (letter === '{') {
+      // set the starting index for this tag
+      lastIdx = i;
+    } else if (letter === '}') {
+      // grab the tag and send it off for processing
+      const tag = script.slice(lastIdx, i + 1);
+      lastIdx = i + 1;
+
+      returning.push(parseEventTag(tag, returning.length));
+    } else if (letter === ' ' || letter === '.') {
+      // text-only tags end with either a word break or a period. This will break if there are sentences that end without a period, ie: "projected{/edit}"
+      const tag = script.slice(lastIdx, i + 1);
+      lastIdx = i + 1;
+
+      returning.push({
+        id: returning.length,
+        type: 'text',
+        text: tag.trim(), // remove whitespace, we're already accounting for it in the css for the prompter
+      });
+    }
+  }
+
+  return returning;
+}
+
+function parseEventTag(tag: string, id: number): PToken {
+  if (tag.startsWith('{/')) {
+    // all end tags are the same, since we're only using them for line breaks for now
+    return {
+      type: 'event',
+      eventType: 'lineBreak',
+      eventTarget: '', // isn't used but still required
+      id,
+    };
+  } else {
+    const tagData = tag
+      .replace(/{|}/gim, '') // strip the tag markers, we just want the data
+      .split(';')[0]; // some tags have extra data after a semicolon, we don't need that at this time, so strip it out
+
+    // tags have the type and target separated by a colon
+    const [tagType, tagTarget] = tagData.split(':');
+
+    return {
+      type: 'event',
+      eventType: getEventNameFromTag(tagType),
+      eventTarget: tagTarget.split('=')[1], // remove the "id=" from the target
+      id,
+    };
+  }
+}
+
+function getEventNameFromTag(str: string): PrompterEvent['event'] {
+  switch (str) {
+    default:
+    case 'edit':
+      return 'switchSection';
+    case 'image':
+      return 'switchToImage';
+    case 'camera':
+      return 'switchToCamera';
+  }
+}
+
+/**
+ * DEBUG DATA - TESTING ONLY
+ */
+function getDebugScriptData() {
+  const returning: PToken[] = [];
   let id = 0;
 
-  /**
-   * DEBUG
-   * Replace this with something that actually converts the script into a tokenized list
-   */
   returning.push({
     type: 'event',
     id: id++,
@@ -35,6 +105,48 @@ export function TokenizeScript(script: string): PToken[] {
   }
 
   return returning;
+}
+
+/**
+ * DEBUG DATA - TESTING ONLY
+ */
+function getDebugScriptData2() {
+  const expected: PToken[] = [
+    {
+      id: 0,
+      type: 'event',
+      eventType: 'switchToImage',
+      eventTarget: '602864342381',
+    },
+    {
+      id: 1,
+      type: 'event',
+      eventType: 'switchSection',
+      eventTarget: 'YfcvHu4mdv',
+    },
+    {
+      id: 2,
+      type: 'text',
+      text: 'Mortgage',
+    },
+    {
+      id: 3,
+      type: 'text',
+      text: 'rates',
+    },
+    {
+      id: 4,
+      type: 'text',
+      text: 'are',
+    },
+    {
+      id: 5,
+      type: 'text',
+      text: 'projected',
+    },
+  ];
+
+  return expected;
 }
 
 // Sample script copied from assignment pdf

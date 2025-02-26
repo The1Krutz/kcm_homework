@@ -15,7 +15,7 @@ type EventWithDetails = {
 };
 
 type EventWithoutDetails = {
-  event: 'startPlayback' | 'stopPlayback' | 'resetPlayback';
+  event: 'startPlayback' | 'stopPlayback' | 'resetPlayback' | 'lineBreak';
 };
 
 export type PrompterEvent = {} & (EventWithDetails | EventWithoutDetails);

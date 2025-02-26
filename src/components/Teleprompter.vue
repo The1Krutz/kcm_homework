@@ -18,7 +18,7 @@ defineExpose({
 
 const basePlaybackSpeed = 200; // time per word in milliseconds
 
-const currentFocusToken: Ref<number> = ref(0); // id of the currently focused token, controls scrolling behavior
+const currentFocusToken: Ref<number> = ref(-1); // id of the currently focused token, controls scrolling behavior
 const focusMe = useTemplateRef<HTMLSpanElement[]>('focusMe');
 const currentTimeout: Ref<number> = ref(0);
 const isPlaying: Ref<boolean> = ref(false);
@@ -49,7 +49,7 @@ function StopPrompter() {
 
 function ResetPrompter() {
   emitEvent('prompterEvent', { event: 'resetPlayback' });
-  currentFocusToken.value = 0;
+  currentFocusToken.value = -1;
   scrollToFocusToken();
 }
 
@@ -86,6 +86,8 @@ function processNextToken() {
       processNextToken();
     }, getTimeToNextToken());
   } else if (currentToken.type === 'event') {
+    console.log('tomato', currentToken);
+
     // emit events for non-visible tokens
     if (currentToken.eventType === 'switchToCamera') {
       emitEvent('prompterEvent', { event: 'switchToCamera', target: currentToken.eventTarget });
