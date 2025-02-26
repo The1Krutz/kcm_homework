@@ -13,12 +13,30 @@ defineExpose({
   ResetPrompter,
 });
 
+const fontSize: Ref<number> = ref(20);
+const scrollSpeed: Ref<number> = ref(200);
+const currentFocusToken: Ref<number> = ref(0); // id of the currently focused token, controls scrolling behavior
+const focusMe = useTemplateRef<HTMLSpanElement[]>('focusMe');
+const currentTimeout: Ref<number> = ref(0);
+const isPlaying: Ref<boolean> = ref(false);
+
 function StartPrompter() {
+  if (isPlaying.value) {
+    // early out if the player is already running
+    return;
+  }
+
   emitEvent('prompterEvent', { event: 'startPlayback' });
+  isPlaying.value = true;
   processNextToken();
 }
 
 function StopPrompter() {
+  if (!isPlaying.value) {
+    // early out if the player is already stopped
+    return;
+  }
+
   emitEvent('prompterEvent', { event: 'stopPlayback' });
   clearTimeout(currentTimeout.value);
 }
@@ -29,7 +47,7 @@ function ResetPrompter() {
   scrollToFocusToken();
 }
 
-function SetScrollSpeed(newSpeed: number) {
+function SetSpeed(newSpeed: number) {
   // enforce some reasonable limits before setting the font size
   if (newSpeed > MaxScrollSpeed) {
     scrollSpeed.value = MaxScrollSpeed;
@@ -85,12 +103,6 @@ function processNextToken() {
 function scrollToFocusToken() {
   focusMe.value?.[currentFocusToken.value]?.scrollIntoView({ behavior: 'smooth' });
 }
-
-const fontSize: Ref<number> = ref(20);
-const scrollSpeed: Ref<number> = ref(200);
-const currentFocusToken: Ref<number> = ref(0); // id of the currently focused token, controls scrolling behavior
-const focusMe = useTemplateRef<HTMLSpanElement[]>('focusMe');
-const currentTimeout: Ref<number> = ref(0);
 </script>
 
 <template>

@@ -13,14 +13,18 @@ import {
 } from './components/types';
 import { sampleScript, TokenizeScript } from './components/data';
 
-const eventHistory: Ref<PrompterEvent[]> = ref([]);
-const currentStatus: Ref<PrompterStatus> = ref({
+const defaultStatus: PrompterStatus = {
   status: StatusOption.Stopped,
-  feed: '',
-  section: '',
-});
+  feed: 'n/a',
+  section: 'n/a',
+};
+
+const eventHistory: Ref<PrompterEvent[]> = ref([]);
+const currentStatus: Ref<PrompterStatus> = ref(defaultStatus);
 const tokenizedText: Ref<PToken[]> = ref([]);
 const prompter: Ref<InstanceType<typeof Teleprompter> | null> = ref(null);
+const playbackSpeed: Ref<number> = ref(200);
+const prompterFontSize: Ref<number> = ref(20);
 
 function onStart() {
   console.log('App.onStart');
@@ -63,8 +67,8 @@ function onPrompterEvent(event: PrompterEvent) {
       /**
        * This keeps the current running state (ie if it's running, keep running) but resets the feed/section so the start tags can set them
        */
-      currentStatus.value.feed = '';
-      currentStatus.value.section = '';
+      currentStatus.value.feed = defaultStatus.feed;
+      currentStatus.value.section = defaultStatus.section;
       // clear event history
       eventHistory.value = [];
       break;
