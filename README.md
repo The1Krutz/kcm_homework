@@ -5,8 +5,9 @@ Homework assignment for Keeping Current Matters
 ## Deliverables
 
 1. Instructions on how to run the application
-   1. `npm run dev` to start local site
-   2. `npm run test` to run unit tests
+   1. `npm i` to run initial setup
+   2. `npm run dev` to start local site
+   3. `npm run test` to run unit tests (optional)
 2. Brief explanation of your approach and any challenges you encountered
    1. First problem encountered: I've never used Vue before. I used `npm create vue@latest` from the [Vue quickstart](https://vuejs.org/guide/quick-start.html) documentation to create a basic starter app.
    2. Created a few skeleton components to get started. Wired up some simple data and control
